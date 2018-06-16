@@ -14,7 +14,7 @@ import {
 import firebase from 'firebase';
 import { Header, Button, Card, CardSection, Spinner } from './src/components/common';
 import LoginForm from './src/components/LoginForm';
-import { Avatar } from 'react-native-elements';
+import Home from './src/components/Home';
 
 
 export default class App extends Component {
@@ -45,28 +45,16 @@ export default class App extends Component {
   renderContent = () => {
     switch (this.state.loggedIn){
       case true: return (
-                  <Card>
-                    <CardSection>
-                      <Avatar
-                      large
-                      source={{uri: "https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg"}}
-                      onPress={() => console.log("Works!")}
-                      activeOpacity={0.7}
-                      />
-                      <Button onPress={() => firebase.auth().signOut()}>
-                        Logout
-                      </Button>
-                    </CardSection>
-                  </Card>
-                );
+        <Home/>
+      );
       case false: return <LoginForm />
       default : return (
-                  <Card>
-                    <CardSection>
-                      <Spinner size = "large" />
-                    </CardSection>
-                  </Card>
-                );
+        <Card>
+          <CardSection>
+            <Spinner size = "large" />
+          </CardSection>
+        </Card>
+      );
     }    
   }
   render() {

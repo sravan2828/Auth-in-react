@@ -2,37 +2,22 @@ import React, { Component } from 'react';
 import { Text, ScrollView } from 'react-native';
 import firebase from 'firebase';
 import { Button, Card, CardSection, Input, Spinner } from './common';
+import Toast from 'react-native-simple-toast';
 
 class LoginForm extends Component{
-    state = { email: '', password: '', error: '', loading: false};
+    state = { email: '', password: '', loading: false};
 
     onButtonPress() {
-
         const { email, password } = this.state;
-        this.setState({ error: '', loading: true });
-
+        this.setState({loading: true });
         firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(this.onLoginSuccess.bind(this))
+        //.then(this.onLoginSuccess())
         .catch(() => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
+            Toast.show('This is a toast.');
+            this.setState({loading: false });
+            /* firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(this.onLoginSuccess.bind(this))
-            .catch(this.onLoginError.bind(this));
-        });
-    }
-
-    onLoginSuccess() {
-        this.setState({ 
-            email: '',
-            password: '',
-            loading: false,
-            error: ''
-        });
-    }
-
-    onLoginError() {
-        this.setState({
-            error: 'Authentication failed.',
-            loading: false
+            .catch(this.onLoginError.bind(this)); */
         });
     }
 
@@ -49,7 +34,6 @@ class LoginForm extends Component{
 
     render() {
         return(
-            <ScrollView >
             <Card>
                 <CardSection>
                     <Input 
@@ -68,23 +52,12 @@ class LoginForm extends Component{
                         isPassword={true}
                     />
                 </CardSection>
-                <Text style={styles.errorTextStyle}>
-                    {this.state.error}
-                </Text>
                 <CardSection>
                     {this.renderButton()}
                 </CardSection>
             </Card>
-            </ScrollView>
         );
     }
 }
 
-const styles = {
-    errorTextStyle: {
-        fontSize: 20,
-        alignSelf: 'center',
-        color: 'red'
-    }
-};
 export default LoginForm;
