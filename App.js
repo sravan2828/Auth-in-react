@@ -15,6 +15,7 @@ import firebase from 'firebase';
 import { Header, Button, Card, CardSection, Spinner } from './src/components/common';
 import LoginForm from './src/components/LoginForm';
 import Home from './src/components/Home';
+import Register from './src/components/RegisterForm';
 
 
 export default class App extends Component {
@@ -47,7 +48,7 @@ export default class App extends Component {
       case true: return (
         <Home/>
       );
-      case false: return <LoginForm />
+      case false: return <Register />
       default : return (
         <Card>
           <CardSection>
@@ -60,7 +61,7 @@ export default class App extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-      <Header headerText="Login" />
+      <Header headerText="Sun Waters" />
       {this.renderContent()}
       </View>
     );

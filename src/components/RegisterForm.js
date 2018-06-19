@@ -1,35 +1,26 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-import firebase from 'firebase';
 import { Button, Card, CardSection, Input, Spinner } from './common';
-import Toast from 'react-native-simple-toast';
 
-class LoginForm extends Component{
-    state = { email: '', password: '', loading: false};
+export default class Home extends Component {
 
-    onButtonPress() {
-        const { email, password } = this.state;
-        this.setState({loading: true });
-        firebase.auth().signInWithEmailAndPassword(email, password)
-        //.then(this.onLoginSuccess())
-        .catch(() => {
-            Toast.show('This is a toast.');
-            this.setState({loading: false });
-            /* firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then(this.onLoginSuccess.bind(this))
-            .catch(this.onLoginError.bind(this)); */
-        });
-    }
+    state = { email: '', password: '', rePassword: '', loading: false};
 
-    renderButton(){
+    renderButton = () => {
         if(this.state.loading){
             return <Spinner size="small" /> ;
         }
         return(
-            <Button onPress={this.onButtonPress.bind(this)}>
-                LOG-IN
+            <Button onPress={() => this.registerUser()}>
+                Register
             </Button>
         );
+    }
+
+    registerUser = () => {
+        const { email, password } = this.state;
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(this.onLoginSuccess.bind(this))
+            .catch(this.onLoginError.bind(this));
     }
 
     render() {
@@ -53,11 +44,18 @@ class LoginForm extends Component{
                     />
                 </CardSection>
                 <CardSection>
+                    <Input 
+                        placeholder="re enter password"
+                        value={this.state.rePassword}
+                        onChangeText={rePassword => this.setState({ rePassword })}
+                        label="Password"
+                    />
+                </CardSection>
+                <CardSection>
                     {this.renderButton()}
                 </CardSection>
             </Card>
         );
     }
-}
 
-export default LoginForm;
+}
