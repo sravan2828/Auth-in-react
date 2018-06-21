@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Card, CardSection, Input, Spinner } from './common';
+import Toast from 'react-native-simple-toast';
+import firebase from 'firebase';
 
 export default class Home extends Component {
 
@@ -17,10 +19,23 @@ export default class Home extends Component {
     }
 
     registerUser = () => {
-        const { email, password } = this.state;
-        firebase.auth().createUserWithEmailAndPassword(email, password)
+        const { email, password, rePassword } = this.state;
+        if(password === rePassword){
+            firebase.auth().createUserWithEmailAndPassword(email, password)
             .then(this.onLoginSuccess.bind(this))
-            .catch(this.onLoginError.bind(this));
+            .catch(this.onLoginError());
+        } else {
+            Toast.show("password didn't match in both fields");
+        }
+        
+    }
+
+    onLoginError = () => {
+        Toast.show("registration Failed");
+    }
+
+    onLoginSuccess = () => {
+        Toast.show("Registration Successful");
     }
 
     render() {
@@ -32,6 +47,14 @@ export default class Home extends Component {
                         onChangeText={email => this.setState({ email })}
                         label='Email'
                         placeholder="username@gmail.com"
+                    />
+                </CardSection>
+                <CardSection>
+                    <Input 
+                        placeholder="phone"
+                        value={this.state.phone}
+                        onChangeText={phone => this.setState({ phone })}
+                        label="phone"
                     />
                 </CardSection>
                 <CardSection>
