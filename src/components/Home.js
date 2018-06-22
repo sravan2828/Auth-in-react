@@ -13,25 +13,16 @@ class Home extends Component {
     };
 
     placeOrder = () => {
-        
-      axios.post(
-        'https://webhook.site/c8659e37-146b-4726-ad97-06ba9b4032f0', 
-        {
-           'noOfCans': this.state.noOfCans
-        },
-        {
-           headers: {
-               'api-token': 'xyz',
-                //other header fields
-           }
-        }
-    )
-    .then(() => {
-        Toast.show('Order placed');
-      })
-      .catch((error) =>{
-        Toast.show('error placing order');
-      });
+        var user = firebase.auth().currentUser;
+        firebase.database().ref('orders/').push({
+            noOfCans: this.state.noOfCans,
+            user: user.email
+        }).then(() => {
+            Toast.show('Order placed');
+          })
+          .catch((error) =>{
+            Toast.show('error placing order');
+          });
     }
 
     onChange = (value, index, data) => {
@@ -48,14 +39,11 @@ class Home extends Component {
           }];
         return(
             <Card>
-                <CardSection>
-                    <Text style={styles.Title}>Balance: 20$</Text>
-                </CardSection>
                 <Text>Order:</Text>
                 <Dropdown
-                        label='Number of Cans'
-                        data={data}
-                        onChangeText={(value, index, data) => this.onChange(value, index, data)}/>
+                    label='Number of Cans'
+                    data={data}
+                    onChangeText={(value, index, data) => this.onChange(value, index, data)}/>
                 <CardSection>
                     <Button onPress={() => this.placeOrder()}>
                         Place order
@@ -68,7 +56,7 @@ class Home extends Component {
                 </CardSection>
             </Card>
         );
-    }
+    };
 }
 const styles = StyleSheet.create({
     Title: {
