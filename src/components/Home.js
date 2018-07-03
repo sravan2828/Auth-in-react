@@ -16,7 +16,9 @@ class Home extends Component {
         var user = firebase.auth().currentUser;
         firebase.database().ref('orders/').push({
             noOfCans: this.state.noOfCans,
-            user: user.email
+            user: user.email,
+            status: "Pending",
+            date: Date()
         }).then(() => {
             Toast.show('Order placed');
           })
@@ -30,13 +32,11 @@ class Home extends Component {
     }
 
     render() {
-        let data = [{
-            value: '1',
-          }, {
-            value: '2',
-          }, {
-            value: '3',
-          }];
+        let data = [];
+        for(i = 1; i <= 20 ; i++)
+        {
+            data.push({value: i});
+        }
         return(
             <Card>
                 <Text>Order:</Text>

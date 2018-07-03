@@ -5,7 +5,13 @@ import firebase from 'firebase';
 
 export default class Home extends Component {
 
-    state = { email: '', password: '', rePassword: '', loading: false};
+    state = {   email: '',
+                password: '',
+                rePassword: '',
+                name: '',
+                address: '',
+                phone: '',
+                loading: false};
 
     renderButton = () => {
         if(this.state.loading){
@@ -19,18 +25,37 @@ export default class Home extends Component {
     }
 
     registerUser = () => {
-        const { email, password, rePassword } = this.state;
-        if(password === rePassword){
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then(this.onLoginSuccess.bind(this))
-            .catch(this.onLoginError());
+        const { email, password, rePassword, name, address, phone} = this.state;
+        if (email === "" || password === "" || rePassword === "" ||
+            name === "" || phone ==="" || address === ""){
+            Toast.show("please enter all fields");
         } else {
-            Toast.show("password didn't match in both fields");
+            if(password === rePassword){
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then(() =>{ this.updateUser() });
+            } else {
+                Toast.show("password didn't match in both fields");
+            }
         }
+    }
+
+    updateUser = () => {
+        let user = firebase.auth().currentUser;
+        firebase.database().ref('users/'+this.state.phone+"/").set({
+            email: user.email,
+            name: this.state.name,
+            phone: this.state.phone,
+            address: this.state.address,
+        }).then(() => {
+            this.onLoginSuccess();
+        })
+        .catch((error) =>{
+           this.onLoginError(error);
+        });
         
     }
 
-    onLoginError = () => {
+    onLoginError = (error) => {
         Toast.show("registration Failed");
     }
 
@@ -43,6 +68,14 @@ export default class Home extends Component {
             <Card>
                 <CardSection>
                     <Input 
+                        value={this.state.name}
+                        onChangeText={name => this.setState({ name })}
+                        label='Name'
+                        placeholder="Enter name here"
+                    />
+                </CardSection>
+                <CardSection>
+                    <Input 
                         value={this.state.email}
                         onChangeText={email => this.setState({ email })}
                         label='Email'
@@ -51,7 +84,7 @@ export default class Home extends Component {
                 </CardSection>
                 <CardSection>
                     <Input 
-                        placeholder="phone"
+                        placeholder="99xxxxxxxx"
                         value={this.state.phone}
                         onChangeText={phone => this.setState({ phone })}
                         label="phone"
@@ -59,7 +92,15 @@ export default class Home extends Component {
                 </CardSection>
                 <CardSection>
                     <Input 
-                        placeholder="password"
+                        placeholder="type address here"
+                        value={this.state.address}
+                        onChangeText={address => this.setState({ address })}
+                        label="Address"
+                    />
+                </CardSection>
+                <CardSection>
+                    <Input 
+                        placeholder="********"
                         value={this.state.password}
                         onChangeText={password => this.setState({ password })}
                         label="Password"
